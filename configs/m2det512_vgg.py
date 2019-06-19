@@ -1,3 +1,5 @@
+from configs.common_settings import *
+
 model = dict(
     type = 'm2det',
     input_size = 512,
@@ -25,7 +27,6 @@ model = dict(
     )
 
 train_cfg = dict(
-    cuda = True,
     warmup = 5,
     per_batch_size = 16,
     lr = [0.004, 0.002, 0.0004, 0.00004, 0.000004],
@@ -40,7 +41,6 @@ train_cfg = dict(
     )
 
 test_cfg = dict(
-    cuda = True,
     topk = 0,
     iou = 0.45,
     soft_nms = True,
@@ -58,20 +58,3 @@ loss = dict(overlap_thresh = 0.5,
             encode_target = False)
 
 optimizer = dict(type='SGD', momentum=0.9, weight_decay=0.0005)
-
-dataset = dict(
-    VOC = dict(
-        train_sets = [('2007', 'trainval'), ('2012', 'trainval')],
-        eval_sets = [('2007', 'test')],
-        ),
-    COCO = dict(
-        train_sets = [('2014', 'train'), ('2014', 'valminusminival')],
-        eval_sets = [('2014', 'minival')],
-        test_sets = [('2015', 'test-dev')],
-        )
-    )
-
-import os
-home = os.path.expanduser("~")
-VOCroot = os.path.join(home,"data/VOCdevkit/")
-COCOroot = os.path.join(home,"data/coco/")

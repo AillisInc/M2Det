@@ -29,3 +29,7 @@ venv.bak/
 .spyderproject
 .spyproject
 
+weights
+dataset
+lib
+runs

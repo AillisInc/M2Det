@@ -39,7 +39,8 @@ def init_net(net, cfg, resume_net):
         net.init_model(cfg.model.pretrained)
     else:
         print('Loading resume network...')
-        state_dict = torch.load(resume_net)
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        state_dict = torch.load(resume_net, map_location=device)
 
         from collections import OrderedDict
         new_state_dict = OrderedDict()
@@ -128,14 +129,13 @@ def write_logger(info_dict,logger,iteration,status):
     else:
         pass
 
-def image_forward(img, net, cuda, priors, detector, transform):
+def image_forward(img, net, device, priors, detector, transform):
     w,h = img.shape[1],img.shape[0]
     scale = torch.Tensor([w,h,w,h])
     with torch.no_grad():
         x = transform(img).unsqueeze(0)
-        if cuda:
-            x = x.cuda()
-            scale = scale.cuda()
+        x = x.to(device)
+        scale = scale.to(device)
     out = net(x)
     boxes, scores = detector.forward(out, priors)
     boxes = (boxes[0] * scale).cpu().numpy()

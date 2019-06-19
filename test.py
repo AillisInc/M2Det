@@ -25,19 +25,21 @@ args = parser.parse_args()
 print_info('----------------------------------------------------------------------\n'
            '|                       M2Det Evaluation Program                     |\n'
            '----------------------------------------------------------------------', ['yellow','bold'])
-global cfg
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 cfg = Config.fromfile(args.config)
 if not os.path.exists(cfg.test_cfg.save_folder):
     os.mkdir(cfg.test_cfg.save_folder)
+
 anchor_config = anchors(cfg)
 print_info('The Anchor info: \n{}'.format(anchor_config))
+
 priorbox = PriorBox(anchor_config)
 with torch.no_grad():
     priors = priorbox.forward()
-    if cfg.test_cfg.cuda:
-        priors = priors.cuda()
+    priors = priors.to(device)
 
-def test_net(save_folder, net, detector, cuda, testset, transform, max_per_image=300, thresh=0.005):
+def test_net(save_folder, net, detector, device, testset, transform, max_per_image=300, thresh=0.005):
     if not os.path.exists(save_folder):
         os.mkdir(save_folder)
 
@@ -54,7 +56,7 @@ def test_net(save_folder, net, detector, cuda, testset, transform, max_per_image
         img = testset.pull_image(i)
         # step1: CNN detection
         _t['im_detect'].tic()
-        boxes, scores = image_forward(img, net, cuda, priors, detector, transform)
+        boxes, scores = image_forward(img, net, device, priors, detector, transform)
         detect_time = _t['im_detect'].toc()
         # step2: Post-process: NMS
         _t['misc'].tic()
@@ -82,18 +84,14 @@ if __name__ == '__main__':
     net.eval()
     _set = 'eval_sets' if not args.test else 'test_sets'
     testset = get_dataloader(cfg, args.dataset, _set)
-    if cfg.test_cfg.cuda:
-        net = net.cuda()
-        cudnn.benchmark = True
-    else:
-        net = net.cpu()
+    net = net.to(device)
     detector = Detect(cfg.model.m2det_config.num_classes, cfg.loss.bkg_label, anchor_config)
     save_folder = os.path.join(cfg.test_cfg.save_folder, args.dataset)
     _preprocess = BaseTransform(cfg.model.input_size, cfg.model.rgb_means, (2, 0, 1))
     test_net(save_folder, 
              net, 
              detector, 
-             cfg.test_cfg.cuda, 
+             device,
              testset, 
              transform = _preprocess, 
              max_per_image = cfg.test_cfg.topk, 

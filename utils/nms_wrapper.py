@@ -5,8 +5,6 @@
 # Written by Ross Girshick
 # --------------------------------------------------------
 
-from .nms.cpu_nms import cpu_nms, cpu_soft_nms
-from .nms.gpu_nms import gpu_nms
 
 
 # def nms(dets, thresh, force_cpu=False):
@@ -21,6 +19,9 @@ from .nms.gpu_nms import gpu_nms
 
 
 def nms(dets, thresh, force_cpu=False):
+    from nms.cpu_nms import cpu_nms, cpu_soft_nms
+    from nms.gpu_nms import gpu_nms
+
     """Dispatch to either CPU or GPU NMS implementations."""
 
     if dets.shape[0] == 0:

@@ -17,9 +17,8 @@ import cv2
 import numpy as np
 import json
 import uuid
-from utils.pycocotools.coco import COCO
-from utils.pycocotools.cocoeval import COCOeval
-from utils.pycocotools import mask as COCOmask
+from pycocotools.coco import COCO
+from pycocotools.cocoeval import COCOeval
 
 
 class COCODetection(data.Dataset):
@@ -62,7 +61,7 @@ class COCODetection(data.Dataset):
             if image_set.find('test') != -1:
                 print('test set will not load annotations!')
             else:
-                self.annotations.extend(self._load_coco_annotations(coco_name, indexes,_COCO))
+                self.annotations.extend(self._load_coco_annotations(coco_name, indexes, _COCO))
 
 
 
@@ -89,18 +88,18 @@ class COCODetection(data.Dataset):
 
 
     def _load_coco_annotations(self, coco_name, indexes, _COCO):
-        cache_file=os.path.join(self.cache_path,coco_name+'_gt_roidb.pkl')
-        if os.path.exists(cache_file):
-            with open(cache_file, 'rb') as fid:
-                roidb = pickle.load(fid)
-            print('{} gt roidb loaded from {}'.format(coco_name,cache_file))
-            return roidb
+        # cache_file=os.path.join(self.cache_path,coco_name+'_gt_roidb.pkl')
+        # if os.path.exists(cache_file):
+        #     with open(cache_file, 'rb') as fid:
+        #         roidb = pickle.load(fid)
+        #     print('{} gt roidb loaded from {}'.format(coco_name,cache_file))
+        #     return roidb
 
         gt_roidb = [self._annotation_from_index(index, _COCO)
                     for index in indexes]
-        with open(cache_file, 'wb') as fid:
-            pickle.dump(gt_roidb,fid,pickle.HIGHEST_PROTOCOL)
-        print('wrote gt roidb to {}'.format(cache_file))
+        # with open(cache_file, 'wb') as fid:
+        #     pickle.dump(gt_roidb,fid,pickle.HIGHEST_PROTOCOL)
+        # print('wrote gt roidb to {}'.format(cache_file))
         return gt_roidb
 
 
