@@ -69,9 +69,9 @@ curl -LO https://s3.amazonaws.com/amdegroot-datasets/instances_trainval35k.json.
 echo "Combining train and val images"
 mkdir ../images/trainval35k
 cd ../images/train2014
-find . -name "*.jpg" -print0 | xargs -0 -I {} cp {} trainval35k/
+find . -name "*.jpg" -print0 | xargs -0 -I {} cp {} ../trainval35k/
 cd ../val2014
-find . -name "*.jpg" -print0 | xargs -0 -I {} cp {} trainval35k/
+find . -name "*.jpg" -print0 | xargs -0 -I {} cp {} ../trainval35k/
 
 
 end=`date +%s`
