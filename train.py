@@ -2,6 +2,7 @@ from __future__ import print_function
 import warnings
 from torch.optim import lr_scheduler
 from tensorboardX import SummaryWriter
+import lib.model_serializer as serializer
 
 warnings.filterwarnings('ignore')
 
@@ -11,11 +12,9 @@ from utils.core import *
 parser = argparse.ArgumentParser(description='M2Det Training')
 parser.add_argument('-c', '--config', default='configs/m2det320_resnet101.py')
 parser.add_argument('-d', '--dataset', default='COCO', help='VOC or COCO dataset')
-parser.add_argument('--ngpu', default=1, type=int, help='gpus')
 parser.add_argument('--resume_net', default=None, help='resume net for retraining')
 parser.add_argument('--resume_epoch', default=0, type=int, help='resume iter for retraining')
 parser.add_argument('--epoch', '-e', type=int, default=100)
-parser.add_argument('-t', '--tensorboard', type=bool, default=False, help='Use tensorborad to show the Loss Graph')
 args = parser.parse_args()
 
 print_info('----------------------------------------------------------------------\n'
@@ -89,9 +88,4 @@ if __name__ == '__main__':
         writer.add_scalar('data/loc_loss', l_loss, epoch)
         writer.add_scalar('data/conf_loss', c_loss, epoch)
 
-        torch.save({
-            'epoch': epoch,
-            'model': net.state_dict(),
-            'optimizer': optimizer.state_dict(),
-            'scheduler': exp_lr_scheduler.state_dict()
-        }, f"results/m2det_snapshot_e{epoch}.pt")
+        serializer.save_snapshots(epoch, net, optimizer, exp_lr_scheduler, f"results/m2det_snapshot_e{epoch}.pt")
