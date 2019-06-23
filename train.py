@@ -3,6 +3,7 @@ import warnings
 from torch.optim import lr_scheduler
 from tensorboardX import SummaryWriter
 import lib.model_serializer as serializer
+from tqdm import tqdm
 
 warnings.filterwarnings('ignore')
 
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     net.train()
     dataset = get_dataloader(cfg, args.dataset, 'train_sets')
     data_loader = data.DataLoader(dataset,
-                                  cfg.train_cfg.per_batch_size * args.ngpu,
+                                  cfg.train_cfg.per_batch_size,
                                   shuffle=True,
                                   num_workers=cfg.train_cfg.num_workers,
                                   collate_fn=detection_collate)
@@ -64,7 +65,8 @@ if __name__ == '__main__':
 
         running_l_loss = 0
         running_c_loss = 0
-        for i, data in enumerate(data_loader):
+        print(f"Epoch {epoch} started!")
+        for i, data in enumerate(tqdm(data_loader)):
             images, targets = data
 
             images = images.to(device)
@@ -75,7 +77,6 @@ if __name__ == '__main__':
 
             loss_l, loss_c = criterion(out, priors, targets)
             loss = loss_l + loss_c
-
             running_c_loss += loss_c
             running_l_loss += loss_l
 
