@@ -165,4 +165,4 @@ while True:
     if cam < 0 and not video:
         cv2.imwrite('{}_m2det.jpg'.format(fname.split('.')[0]), im2show)
     else:
-        out_video.write(im2show)
+        pass
