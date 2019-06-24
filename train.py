@@ -4,6 +4,7 @@ from torch.optim import lr_scheduler
 from tensorboardX import SummaryWriter
 import lib.model_serializer as serializer
 from tqdm import tqdm
+from torch.utils.data import DataLoader
 
 warnings.filterwarnings('ignore')
 
@@ -36,7 +37,7 @@ def get_model(device):
     net = build_net('train',
                     size=cfg.model.input_size,  # Only 320, 512, 704 and 800 are supported
                     config=cfg.model.m2det_config)
-    init_net(net, cfg, args.resume_net)  # init the network with pretrained weights or resumed weights
+    init_net(net, cfg)
 
     if torch.cuda.device_count() > 1:
         net = torch.nn.DataParallel(net)
@@ -44,7 +45,7 @@ def get_model(device):
     net.to(device)
     return net
 
-if __name__ == '__main__':
+def main(cfg):
     writer = SummaryWriter()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     priors = get_priors(device)
@@ -60,7 +61,7 @@ if __name__ == '__main__':
 
     net.train()
     dataset = get_dataloader(cfg, args.dataset, 'train_sets')
-    data_loader = data.DataLoader(dataset,
+    data_loader = DataLoader(dataset,
                                   batch_size=args.batch_size,
                                   shuffle=True,
                                   num_workers=args.num_workers,
@@ -96,3 +97,7 @@ if __name__ == '__main__':
         writer.add_scalar('data/conf_loss', c_loss, epoch)
 
         serializer.save_snapshots(epoch, net, optimizer, exp_lr_scheduler, f"results/m2det_snapshot_e{epoch}.pt")
+
+
+if __name__ == '__main__':
+    main(cfg)
