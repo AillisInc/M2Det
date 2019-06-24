@@ -34,7 +34,7 @@ def anchors(cfg):
                                cfg.model.anchor_config.size_pattern, 
                                cfg.model.anchor_config.step_pattern)
     
-def init_net(net, cfg, resume_net):    
+def init_net(net, cfg, resume_net=None):
     if cfg.model.init_net and not resume_net:
         net.init_model(cfg.model.pretrained)
     else:
