@@ -13,7 +13,7 @@ from utils.core import *
 parser = argparse.ArgumentParser(description='M2Det Training')
 parser.add_argument('-c', '--config', default='configs/m2det320_resnet101.py')
 parser.add_argument('-d', '--dataset', default='COCO', help='VOC or COCO dataset')
-parser.add_argument('--resume_net', default=None, help='resume net for retraining')
+parser.add_argument('--resume', '-r', default=None, help='resume net for retraining')
 parser.add_argument('--epoch', '-e', type=int, default=100)
 parser.add_argument('--batch_size', '-b', type=int, default=32)
 parser.add_argument('--num_workers', '-w', type=int, default=10)
@@ -51,6 +51,12 @@ if __name__ == '__main__':
     net = get_model(device)
     optimizer = set_optimizer(net, cfg)
     criterion = set_criterion(cfg)
+    exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
+
+    start_epoch = 0
+    if args.resume:
+        serializer.load_snapshots_to_model(args.resume, net, optimizer, exp_lr_scheduler)
+        start_epoch = serializer.load_epoch(args.resume)
 
     net.train()
     dataset = get_dataloader(cfg, args.dataset, 'train_sets')
@@ -59,9 +65,8 @@ if __name__ == '__main__':
                                   shuffle=True,
                                   num_workers=args.num_workers,
                                   collate_fn=detection_collate)
-    exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 
-    for epoch in range(args.epoch):
+    for epoch in range(start_epoch, args.epoch):
         exp_lr_scheduler.step()
 
         running_l_loss = 0
