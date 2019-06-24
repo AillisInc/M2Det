@@ -36,21 +36,14 @@ class Detect(Function):
         prior_data = prior.data
         num = loc_data.size(0)  # batch size
         self.num_priors = prior_data.size(0)
-        self.boxes = torch.zeros(1, self.num_priors, 4)
-        self.scores = torch.zeros(1, self.num_priors, self.num_classes)
+        self.boxes = torch.zeros(num, self.num_priors, 4)
+        self.scores = torch.zeros(num, self.num_priors, self.num_classes)
         if loc_data.is_cuda:
             self.boxes = self.boxes.cuda()
             self.scores = self.scores.cuda()
 
-        if num == 1:
-            # size batch x num_classes x num_priors
-            conf_preds = conf_data.unsqueeze(0)
-
-        else:
-            conf_preds = conf_data.view(num, self.num_priors,
-                                        self.num_classes)
-            self.boxes.expand_(num, self.num_priors, 4)
-            self.scores.expand_(num, self.num_priors, self.num_classes)
+        conf_preds = conf_data.view(num, self.num_priors,
+                                    self.num_classes)
 
         # Decode predictions into bboxes.
         for i in range(num):

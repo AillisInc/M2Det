@@ -75,7 +75,7 @@ class M2Det(nn.Module):
 
         # construct others
         if self.phase == 'test':
-            self.softmax = nn.Softmax()
+            self.softmax = nn.Softmax(dim=2)
         self.Norm = nn.BatchNorm2d(256 * 8)
         self.leach = nn.ModuleList([BasicConv(
             deep_out + shallow_out,
@@ -140,7 +140,7 @@ class M2Det(nn.Module):
         if self.phase == "test":
             output = (
                 loc.view(loc.size(0), -1, 4),  # loc preds
-                self.softmax(conf.view(-1, self.num_classes)),  # conf preds
+                self.softmax(conf.view(conf.size(0), -1, self.num_classes)),  # conf preds
             )
         else:
             output = (
