@@ -28,7 +28,6 @@ model = dict(
 
 train_cfg = dict(
     warmup = 5,
-    per_batch_size = 9,
     lr = [0.004, 0.002, 0.0004, 0.00004, 0.000004, 0.000001],
     gamma = 0.1,
     end_lr = 1e-6,
@@ -37,7 +36,6 @@ train_cfg = dict(
         VOC = [100, 150, 200, 250, 300], # unsolve
         ),
     print_epochs = 10,
-    num_workers= 8,
     )
 
 test_cfg = dict(

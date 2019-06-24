@@ -14,8 +14,9 @@ parser = argparse.ArgumentParser(description='M2Det Training')
 parser.add_argument('-c', '--config', default='configs/m2det320_resnet101.py')
 parser.add_argument('-d', '--dataset', default='COCO', help='VOC or COCO dataset')
 parser.add_argument('--resume_net', default=None, help='resume net for retraining')
-parser.add_argument('--resume_epoch', default=0, type=int, help='resume iter for retraining')
 parser.add_argument('--epoch', '-e', type=int, default=100)
+parser.add_argument('--batch_size', '-b', type=int, default=32)
+parser.add_argument('--num_workers', '-w', type=int, default=10)
 args = parser.parse_args()
 
 print_info('----------------------------------------------------------------------\n'
@@ -54,9 +55,9 @@ if __name__ == '__main__':
     net.train()
     dataset = get_dataloader(cfg, args.dataset, 'train_sets')
     data_loader = data.DataLoader(dataset,
-                                  cfg.train_cfg.per_batch_size,
+                                  batch_size=args.batch_size,
                                   shuffle=True,
-                                  num_workers=cfg.train_cfg.num_workers,
+                                  num_workers=args.num_workers,
                                   collate_fn=detection_collate)
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 
