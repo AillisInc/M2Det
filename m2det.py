@@ -200,9 +200,13 @@ def build_net(phase='train', size=320, config=None):
 if __name__ == "__main__":
     from configs.CC import Config
 
-    cfg = Config.fromfile("./configs/m2det320_resnet101.py")
+    cfg = Config.fromfile("configs/m2det320_vgg.py")
     model = build_net(config=cfg.model.m2det_config)
-    input = torch.randn(2, 3, 300, 300)
-    out = model(input)
-    print(out[0].shape)
-    print(out[1].shape)
+    model.eval()
+    with torch.no_grad():
+        input = torch.randn(1, 3, 320, 320)
+        out = model(input)
+        print(out[0].shape)
+        print(out[1].shape)
+    # input = torch.randn(2, 3, 320, 320)
+    # torch.onnx.export(model, input, "./onnx_model_name.onnx")
