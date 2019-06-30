@@ -13,7 +13,9 @@ from utils.core import *
 
 parser = argparse.ArgumentParser(description='M2Det Training')
 parser.add_argument('-c', '--config', default='configs/m2det320_resnet101.py')
-parser.add_argument('-d', '--dataset', default='COCO', help='VOC or COCO dataset')
+parser.add_argument('-d', '--dataset', default='COCO', choices=['COCO', 'VOC', 'general'])
+parser.add_argument('-rd', '--root_dir') # this value is enabled if general dataset is selected
+parser.add_argument('-i', '--image_set', default='trainval') # this value is enabled if general dataset is selected
 parser.add_argument('--resume', '-r', default=None, help='resume net for retraining')
 parser.add_argument('--epoch', '-e', type=int, default=100)
 parser.add_argument('--batch_size', '-b', type=int, default=32)
@@ -25,6 +27,7 @@ print_info('--------------------------------------------------------------------
            '----------------------------------------------------------------------', ['yellow', 'bold'])
 
 cfg = Config.fromfile(args.config)
+config_compile(cfg)
 
 def get_priors(device):
     priorbox = PriorBox(anchors(cfg))
@@ -60,7 +63,12 @@ def main(cfg):
         start_epoch = serializer.load_epoch(args.resume)
 
     net.train()
-    dataset = get_dataloader(cfg, args.dataset, 'train_sets')
+
+    if args.dataset == 'general':
+        dataset = get_general_dataset(cfg, args.root_dir, args.image_set)
+    else:
+        dataset = get_dataloader(cfg, args.dataset, 'train_sets')
+
     data_loader = DataLoader(dataset,
                                   batch_size=args.batch_size,
                                   shuffle=True,

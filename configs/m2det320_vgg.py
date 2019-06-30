@@ -15,6 +15,7 @@ model = dict(
         sfam = False,
         smooth = True,
         num_classes = 81,
+        class_names = ['positive'],
         ),
     rgb_means = (104, 117, 123),
     p = 0.6,

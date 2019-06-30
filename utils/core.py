@@ -166,3 +166,12 @@ def nms_process(num_classes, i, scores, boxes, cfg, min_thresh, all_boxes, max_p
                 all_boxes[j][i] = all_boxes[j][i][keep, :]
 
 
+def get_general_dataset(cfg, root_dir, image_set):
+    from data.general_image_dataset import GeneralImageDataset
+    _preproc = preproc(cfg.model.input_size, cfg.model.rgb_means, cfg.model.p)
+    return GeneralImageDataset(root_dir=root_dir, image_set=image_set , transforms=_preproc, class_names=cfg.model.m2det_config.class_names)
+
+def config_compile(cfg):
+    m2_cfg = cfg.model.m2det_config
+    if m2_cfg.class_names is not None:
+        m2_cfg.num_classes = len(m2_cfg.class_names) + 1
