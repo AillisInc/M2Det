@@ -1,4 +1,9 @@
-# M2Det
+# M2Det (The updated version that enables to train original dataset)
+**Notice: A part of codes is still under construction.**  
+
+This repository was forked from [original repository](https://github.com/qijiezhao/M2Det) and updated to be able to train your original datasets.  
+You can learn how to train original dataset from [this issue comment](https://github.com/qijiezhao/M2Det/issues/78#issuecomment-507982697).  
+
 Codebase for AAAI2019 "M2Det: A Single-Shot Object Detector based on Multi-Level Feature Pyramid Network" [[Paper link]](https://qijiezhao.github.io/imgs/m2det.pdf)
 
 Author: Qijie Zhao. Date: 19/01/2019
@@ -96,11 +101,12 @@ pip install opencv-python tqdm
 ```Shell
 git clone https://github.com/qijiezhao/M2Det.git
 ```
-- Compile the nms and coco tools:
 
-```Shell
-sh make.sh
-```
+- Install required python library
+
+```bash
+ pip3 install -r requirements.txt
+``` 
 
 - Prepare dataset (e.g., VOC, COCO), refer to [ssd.pytorch](https://github.com/amdegroot/ssd.pytorch) for detailed instructions.
 
@@ -156,6 +162,18 @@ As simple as [demo](#Demo) and [evaluation](#Evaluation), Just use the train scr
   CUDA_VISIBLE_DEVICES=0,1,2,3 python train.py -c=configs/m2det512_vgg.py --ngpu 4 -t True
 ```
 All training configs and model configs are written well in configs/*.py.
+
+### Train original dataset
+In order to train original dataset, a structure of directory and a format of annotation data is the same as the Pascal VOC format.
+
+ #### Pascal VOC format
+- [Directory structure](https://docs.supervise.ly/import/local_files/pascal_voc/)
+- [Annotation XML](https://gist.github.com/Prasad9/30900b0ef1375cc7385f4d85135fdb44)
+
+The example code to train original dataset is like this  
+```bash
+python train.py --dataset general --image_set trainval --roor_dir /path/to/root_dir
+```
 
 ## Multi-scale Evaluation
 To be added.
