@@ -33,7 +33,7 @@ class M2Det(nn.Module):
         self.phase = phase
         self.size = size
         self.init_params(config)
-        print('===> Constructing M2Det model', ['yellow', 'bold'])
+        print('===> Constructing M2Det model')
         self.construct_modules()
 
     def init_params(self, config=None):  # Directly read the config
