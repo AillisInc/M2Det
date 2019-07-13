@@ -54,9 +54,8 @@ def init_net(net, cfg, resume_net=None):
         net.load_state_dict(new_state_dict,strict=False)
 
 def set_optimizer(net, cfg):
-    return optim.SGD(net.parameters(),
+    return optim.Adam(net.parameters(),
                      lr = cfg.train_cfg.lr[0],
-                     momentum = cfg.optimizer.momentum,
                      weight_decay = cfg.optimizer.weight_decay)
 
 def set_criterion(cfg):
