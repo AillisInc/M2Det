@@ -1,6 +1,5 @@
 # M2Det (The updated version that enables to train original dataset)
-**Notice: A part of codes is still under construction.**  
-
+  
 This repository was forked from [original repository](https://github.com/qijiezhao/M2Det) and updated to be able to train your original datasets.  
 You can learn how to train original dataset from [this issue comment](https://github.com/qijiezhao/M2Det/issues/78#issuecomment-507982697).  
 
@@ -163,16 +162,20 @@ As simple as [demo](#Demo) and [evaluation](#Evaluation), Just use the train scr
 ```
 All training configs and model configs are written well in configs/*.py.
 
-### Train original dataset
+### How to train original dataset
 In order to train original dataset, a structure of directory and a format of annotation data is the same as the Pascal VOC format.
 
- #### Pascal VOC format
+#### Pascal VOC format
 - [Directory structure](https://docs.supervise.ly/import/local_files/pascal_voc/)
 - [Annotation XML](https://gist.github.com/Prasad9/30900b0ef1375cc7385f4d85135fdb44)
 
-The example code to train original dataset is like this  
+You have to add class names to an appropriate config file.   
+In case of `configs/m2det320_resnet101.py`, just like [this](https://github.com/fukumame/M2Det/blob/a0c9ce7895eed560f60ef787c4df8748d6672a59/configs/m2det320_resnet101.py#L16)
+
+The example code to train original dataset is like this
+  
 ```bash
-python train.py --dataset general --image_set trainval --roor_dir /path/to/root_dir
+python train.py --dataset general --image_set trainval --roor_dir /path/to/root_dir --config configs/m2det320_resnet101.py
 ```
 
 ## Multi-scale Evaluation
