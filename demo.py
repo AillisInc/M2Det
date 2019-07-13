@@ -22,6 +22,7 @@ print_info(' -------------------------------------------------------------------
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 cfg = Config.fromfile(args.config)
+config_compile(cfg)
 anchor_config = anchors(cfg)
 
 priorbox = PriorBox(anchor_config)
@@ -49,7 +50,8 @@ def _to_color(indx, base):
 
 base = int(np.ceil(pow(cfg.model.m2det_config.num_classes, 1. / 3)))
 colors = [_to_color(x, base) for x in range(cfg.model.m2det_config.num_classes)]
-cats = [_.strip().split(',')[-1] for _ in open('data/coco_labels.txt','r').readlines()]
+# cats = [_.strip().split(',')[-1] for _ in open('data/coco_labels.txt','r').readlines()]
+cats = cfg.model.m2det_config.class_names
 labels = tuple(['__background__'] + cats)
 
 def draw_detection(im, bboxes, scores, cls_inds, fps, thr=0.2):
