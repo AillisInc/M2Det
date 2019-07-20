@@ -6,7 +6,7 @@ def save_snapshots(epoch, model, optimizer, scheduler, path):
     else:
         module = model
     torch.save({
-        'epoch': epoch,
+        'epoch': epoch + 1,
         'model': module.state_dict(),
         'optimizer': optimizer.state_dict(),
         'scheduler': scheduler.state_dict()
